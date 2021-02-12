@@ -1,0 +1,33 @@
+- hosts: Server
+  tasks:
+  - name: Install Httpd 
+    package:
+     name: httpd
+     state: present
+  - name: "installing the php on the webserver"
+    package:
+     name: php
+     state: present
+  - name: Copy web pages
+    copy:
+     dest: "/var/www/html/index.php"
+     src: "index.php"
+  - name: Start httpd service
+    service:
+     state: started
+     name: httpd
+
+- hosts: Loadbalancer
+  tasks:
+  - name: Install load balancer software
+    package:
+      name: haproxy
+  - name: Copy configuration file
+    template:
+      dest: /etc/haproxy/haproxy.cfg
+      src: 02_haproxy.cfg.j2
+  - name: Start Haproxy service
+    service:
+     state: restarted
+     name: haproxy
+

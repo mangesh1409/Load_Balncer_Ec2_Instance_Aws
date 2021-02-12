@@ -1,0 +1,31 @@
+- hosts: "localhost"
+  vars_files:
+      - mysecret.yml
+
+  tasks:
+  - name: "Provisioning OS on AWS using Ansible"
+    ec2:
+       key_name: fbAwsKey
+       instance_type: "t2.micro"
+       image: "ami-08e0ca9924195beba"
+       wait: yes
+       count: 3
+       instance_tags:
+          Name: Ansible_Instance
+       vpc_subnet_id: "subnet-82fce8ea"
+       assign_public_ip: yes
+       region: "ap-south-1"
+       state: present
+       group_id: "sg-0c8fb5b824392917e"
+       aws_access_key: "{{pass}}"
+       aws_secret_key: "{{key}}"
+    register: X
+    
+  - debug:
+     var:  X.instances[0].private_ip
+
+  - debug:
+     var:  X.instances[1].private_ip
+
+  - debug:
+     var:  X.instances[2].private_ip
